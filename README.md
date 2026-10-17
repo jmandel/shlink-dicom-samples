@@ -27,3 +27,12 @@ They look for a file in this mirror first, then at its original source, and chec
 Each file keeps its own licence; there is no licence for the collection as a whole. The IDC files are CC BY. When you use them, cite the collection DOI given in the manifest and NOTICE, and the NCI Imaging Data Commons (https://imaging.datacommons.cancer.gov). The project-made test files are under their projects' MIT or Apache-2.0 licences, named per file.
 
 All human data here was de-identified by its publishers (TCIA and IDC) before release. No file comes from a patient's own records.
+
+## Adding or updating a release
+
+The tools in `tools/` were run on the machine that holds shlink-dicom's sample data (paths at the top of each script):
+
+1. `python3 tools/inventory.py` lists every file shlink-dicom's scripts fetch, with its size, source, licence and a redistribution decision, in `inventory.json`. Set `mirror` true only on files whose source clearly allows redistribution (CC BY, CC0, or a project's own files under MIT, BSD or Apache-2.0). Never set it on CC BY-NC data, files without a licence, files a project took from elsewhere, or anyone's own records. Then add each file's `sha256`.
+2. `python3 tools/mirror.py manifest <set>` writes `manifests/<release>.json` and rebuilds `NOTICE.md`.
+3. `python3 tools/mirror.py upload <set>` creates the release if needed and uploads the assets it lacks, 20 at a time.
+4. Commit the manifest and NOTICE. A changed set of files is a new release (`codec-corpus-2`, for example), so pinned scripts keep working; then point the scripts at it.
